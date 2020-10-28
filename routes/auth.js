@@ -4,11 +4,12 @@ const User = require('../models/users');
 const { registerValidation, loginValidation } = require('./validation');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const verify = require('./verifyToken');
 
-router.get('/', async (req, res) => {
+router.get('/userInfo', verify, async (req, res) => {
 	try {
-		const user = await User.find();
-		res.json(user);
+		const user = await User.find({ _id: req.user._id });
+		res.json({ email: user[0].email, name: user[0].name });
 	} catch (err) {
 		res.send(err);
 	}
@@ -35,7 +36,7 @@ router.post('/signup', async (req, res, next) => {
 
 	try {
 		const savedUser = await user.save();
-		res.json({ user: savedUser.id });
+		res.send('User Signed Up');
 	} catch (err) {
 		res.send(err);
 	}

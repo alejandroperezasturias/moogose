@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const recipeSchema = new mongoose.Schema(
 	{
+		userID: { type: String },
 		id: { type: Number },
 		vegan: { type: Boolean },
 		vegetarian: { type: Boolean },
