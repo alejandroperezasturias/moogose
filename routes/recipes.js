@@ -55,7 +55,7 @@ router.delete('/', verify, async (req, res) => {
 router.put('/', verify, async (req, res) => {
 	const rescipeExists = await Recipes.findOne({
 		id: req.body.id,
-		userID: req.body.userID,
+		userID: req.user._id,
 	});
 	if (!rescipeExists) return res.status(400).send('Recipe Does not Exit');
 
@@ -76,15 +76,18 @@ router.put('/', verify, async (req, res) => {
 	};
 
 	try {
-		await Recipes.findOneAndUpdate({ id: req.user._id }, recipe).then(
-			function () {
-				Recipes.findOne({ id: req.body.id }).then(function (recipe) {
-					res.send(recipe);
-				});
-			}
-		);
+		await Recipes.findOneAndUpdate(
+			{ id: req.body.id, userID: req.user._id },
+			recipe
+		).then(function () {
+			Recipes.findOne({ id: req.body.id, userID: req.user._id }).then(function (
+				recipe
+			) {
+				res.send(recipe);
+			});
+		});
 	} catch (ERR) {
-		res.send(ERR);
+		res.send(ERR.message);
 	}
 });
 
